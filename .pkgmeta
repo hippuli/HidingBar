@@ -1,0 +1,5 @@
+package-as: HidingBar
+
+move-folders:
+  HidingBar/HidingBar: HidingBar
+  HidingBar/HidingBar_Options: HidingBar_Options

@@ -1,7 +1,7 @@
 ## Interface: 20504
 ## Title: HidingBar Options
 ## Author: sfmict
-## Version: v2.5.33
+## Version: v2.5.34
 ## Notes: HidingBar Options
 ## LoadOnDemand: 1
 ## Dependencies: HidingBar

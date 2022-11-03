@@ -38,14 +38,14 @@ local ignoreFrameList = {
 
 local function void() end
 
-local function enter(btn, eventFrame)
+local function enter(btn, _, eventFrame)
 	local bar = btn:GetParent()
 	if not bar:IsShown() then return end
 	bar.isMouse = true
 	bar:enter()
 
 	if bar.config.interceptTooltip then
-		bar:updateTooltipPosition(eventFrame)
+		bar:updateTooltipPosition(eventFrame or btn)
 	end
 end
 
@@ -193,6 +193,7 @@ if MSQ then
 					data._Normal.SetAtlas = function(_, atlas)
 						local skin = MSQ:GetSkin(data._Group.db.SkinID).Normal
 						if atlas == skin.Atlas then
+							data._isMSQCoord = true
 							data._isMSQColor = true
 						else
 							data._Icon:SetAtlas(atlas)
@@ -399,7 +400,7 @@ function hb:checkProfile(profile)
 	if profile.config.grabMinimap == nil then
 		profile.config.grabMinimap = true
 	end
-	profile.config.ignoreMBtn = profile.config.ignoreMBtn or {"GatherMatePin"}
+	profile.config.ignoreMBtn = profile.config.ignoreMBtn or {"GatherMatePin", "TTMinimapButton"}
 	profile.config.grabMinimapAfterN = profile.config.grabMinimapAfterN or 1
 	profile.config.customGrabList = profile.config.customGrabList or {}
 	profile.config.ombGrabQueue = profile.config.ombGrabQueue or {}
@@ -729,14 +730,18 @@ end
 
 
 function hb:ldb_add(event, name, data)
-	if name and data and data.type == "launcher" then
+	if name and data and (data.type == "launcher" or self.pConfig.addAnyTypeFromDataBroker
+	                                             and data.icon
+	                                             and data.OnClick
+	                                             and not name:match(addon))
+	then
 		self:addButton(name, data, event)
 	end
 end
 
 
 function hb:ldb_attrChange(_, name, key, value, data)
-	if not data or data.type ~= "launcher" then return end
+	if not data or data.type ~= "launcher" and not self.pConfig.addAnyTypeFromDataBroker then return end
 	local button = createdButtonsByName[name]
 	if button then
 		if key == "icon" then
@@ -1393,7 +1398,7 @@ function hb:setParams(btn, cb)
 		p.points[i] = {self.GetPoint(btn, i)}
 	end
 
-	local function OnEnter(f) enter(btn, f) end
+	local function OnEnter(f) enter(btn, nil, f) end
 	local function OnLeave() leave(btn) end
 
 	local function setMouseEvents(frame)

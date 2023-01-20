@@ -1,7 +1,7 @@
-## Interface: 30400
+## Interface: 30401
 ## Title: HidingBar
 ## Author: sfmict
-## Version: v3.4.7
+## Version: v3.4.8
 ## Notes: Convenient hiding panel
 ## SavedVariables: HidingBarDB
 ## SavedVariablesPerCharacter: HidingBarDBChar

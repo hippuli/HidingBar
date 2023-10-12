@@ -1549,6 +1549,7 @@ function hb:setParams(btn, cb)
 	self.SetFixedFrameStrata(btn, false)
 	self.SetFixedFrameLevel(btn, false)
 	self.SetAlpha(btn, 1)
+	self.SetSize(btn, self.GetSize(btn))
 
 	return p
 end
@@ -1819,10 +1820,22 @@ function hidingBarMixin:updateTooltipPosition(eventFrame)
 			if not lqtip then return end
 			tooltip = nil
 			for k, t in lqtip:IterateTooltips() do
-				if t:IsShown() and (not t.autoHideTimerFrame or t.autoHideTimerFrame.alternateFrame == eventFrame) then
-					t:SetClampedToScreen(true)
-					tooltip = t
-					break
+				if t:IsShown() then
+					if not t.autoHideTimerFrame then
+						for i = 1, t:GetNumPoints() do
+							local _, rFrame = t:GetPoint(i)
+							if rFrame == eventFrame then
+								t:SetClampedToScreen(true)
+								tooltip = t
+								break
+							end
+						end
+						if tooltip then break end
+					elseif t.autoHideTimerFrame.alternateFrame == eventFrame then
+						t:SetClampedToScreen(true)
+						tooltip = t
+						break
+					end
 				end
 			end
 			if not tooltip then return end
